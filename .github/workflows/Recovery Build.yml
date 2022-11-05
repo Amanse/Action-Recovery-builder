@@ -111,15 +111,15 @@ jobs:
           
     - name: Repo Sync
       run: |
-        mkdir ~/fox
         cd sync
+        mkdir ~/fox
         ./orangefox_sync.sh --branch 12.1 --path ~/fox
       id: pwd
       working-directory: workspace
       
     - name: Clone device tree
       run: |
-        git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ~/fox/
+        git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ~/fox/${{github.event.inputs.DEVICE_PATH}}
 
     - name: Clone common tree
       if: |
@@ -167,7 +167,7 @@ jobs:
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
-        files: ~/fox/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
+        files: ~/fox/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
         name: ${{ github.event.inputs.DEVICE_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
