@@ -142,7 +142,7 @@ jobs:
       run: |
         bash ${GITHUB_WORKSPACE}/scripts/convert.sh ${{ github.event.inputs.DEVICE_PATH }}/${{ steps.buildtree.outputs.value }}.dependencies
         repo sync -j$(nproc --all)
-      working-directory: ${{ steps.pwd.outputs.pwd }}
+      working-directory: /home/runner/fox
       continue-on-error: true
 
     - name: Set Swap Space
@@ -150,20 +150,23 @@ jobs:
       with:
         swap-size-gb: 12
 
-    - name: Check Build Branch
-      if: ${{ github.event.inputs.MANIFEST_BRANCH == 'twrp-12.1' }}
+#     - name: Check Build Branch
+#       if: ${{ github.event.inputs.MANIFEST_BRANCH == 'twrp-12.1' }}
+#       run: |
+#         source build/envsetup.sh
+#         export ALLOW_MISSING_DEPENDENCIES=true
+#         export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
+#         export LC_ALL="C"
+#       working-directory: /home/runner/fox
+
+    - name: Building recovery
       run: |
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
         export LC_ALL="C"
-      working-directory: ${{ steps.pwd.outputs.pwd }}
-
-    - name: Building recovery
-      run: |
-        source build/envsetup.sh
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng &&  mka adbd bootimage -j$(nproc --all)
-      working-directory: ${{ steps.pwd.outputs.pwd }}
+      working-directory: /home/runner/fox
 
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
