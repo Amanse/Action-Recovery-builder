@@ -165,7 +165,8 @@ jobs:
         export ALLOW_MISSING_DEPENDENCIES=true
         export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
         export LC_ALL="C"
-        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng &&  mka adbd bootimage -j$(nproc --all)
+        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng || gzip -cd out/verbose.log.gz | echo
+        mka adbd bootimage -j$(nproc --all)
       working-directory: /home/runner/fox
 
     - name: Upload to Release
